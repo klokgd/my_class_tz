@@ -29,7 +29,7 @@ LessonStudent.init({
     type: DataTypes.INTEGER,
     primaryKey: true,
     references: {
-      model: Student,
+      model: 'students',
       key: 'id'
     }
   },

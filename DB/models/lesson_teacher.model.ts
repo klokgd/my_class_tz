@@ -14,12 +14,13 @@ export class LessonTeacher extends Model<LessonTeacherAttributes>
   public teacherId!: number;
 }
 
+
 LessonTeacher.init({
   lessonId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     references: {
-      model: Lesson,
+      model: 'lessons',
       key: 'id'
     }
   },
@@ -27,7 +28,7 @@ LessonTeacher.init({
     type: DataTypes.INTEGER,
     primaryKey: true,
     references: {
-      model: Teacher,
+      model: 'teachers',
       key: 'id'
     }
   }

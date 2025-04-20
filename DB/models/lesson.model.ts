@@ -1,8 +1,8 @@
 import { Model, DataTypes, Optional, Sequelize } from 'sequelize';
-import { sequelize } from '../index';
 import { Teacher } from './teacher.model';
 import { Student } from './student.model';
 import { LessonStudent } from './lesson_student.model';
+import { sequelize } from '..';
 
 interface LessonAttributes {
   id: number;
@@ -11,7 +11,7 @@ interface LessonAttributes {
   status: number;
 }
 
-interface LessonCreationAttributes extends Optional<LessonAttributes, 'id'> {}
+interface LessonCreationAttributes extends Optional<LessonAttributes, 'id'> { }
 
 export class Lesson extends Model<LessonAttributes, LessonCreationAttributes>
   implements LessonAttributes {
@@ -27,34 +27,31 @@ export class Lesson extends Model<LessonAttributes, LessonCreationAttributes>
   public declare students?: Student[];
 
   public declare LessonStudent?: LessonStudent[]
-
-  public static initModel(sequelize: Sequelize): void {
-    this.init({
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-      },
-      date: DataTypes.DATEONLY,
-      title: DataTypes.STRING,
-      status: DataTypes.INTEGER
-    }, {
-      sequelize,
-      tableName: 'lessons'
-    });
-  }
-
-  public static associateModels(): void {
-    this.belongsToMany(Teacher, {
+  public static associate(models: any): void {
+    this.belongsToMany(models.Teacher, {
       through: 'LessonTeachers',
       foreignKey: 'lessonId',
       as: 'teachers'
     });
-    
-    this.belongsToMany(Student, {
+
+    this.belongsToMany(models.Student, {
       through: 'LessonStudents',
       foreignKey: 'lessonId',
       as: 'students'
     });
   }
 }
+
+Lesson.init({
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  date: DataTypes.DATEONLY,
+  title: DataTypes.STRING,
+  status: DataTypes.INTEGER
+}, {
+  sequelize,
+  tableName: 'lessons'
+})

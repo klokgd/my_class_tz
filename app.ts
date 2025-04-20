@@ -1,16 +1,15 @@
 import express from 'express';
-import { sequelize } from './DB/index';
-import lessonRouter from './routes/lesson.route';
 import config from 'config'
-import { Config } from './config/config.interface';
+import { sequelize } from './DB/index.js';
+import { Config } from './config/config.interface.js';
+import routes from './routes/index.js';
 
-const allConfig = config.get<Config>('');
+const appConfig = config.get<Config>('app');
 const app = express();
-const PORT = allConfig.port || 3000;
+const PORT = appConfig.port || 3000;
 
 app.use(express.json());
-app.use('/lessons', lessonRouter);
-app.use(`/${allConfig.prefix}/`, require("./routes"));
+app.use(`/${appConfig.prefix}/`, routes);
 
 
 const initialize = async () => {

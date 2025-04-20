@@ -22,8 +22,13 @@ export class Student extends Model<StudentAttributes, StudentCreationAttributes>
 
   public declare LessonStudent: LessonStudent;
 
-  public static associations: {
-    lessons: import('sequelize').Association<Student, Lesson>;
+  public static associate(models: any): void {
+    Student.belongsToMany(models.Lesson, {
+      through: models.LessonStudent,
+      foreignKey: 'studentId',
+      otherKey: 'lessonId',
+      as: 'lessons'
+    });
   };
 }
 
@@ -43,9 +48,3 @@ Student.init({
   timestamps: true
 });
 
-Student.belongsToMany(Lesson, {
-  through: LessonStudent,
-  foreignKey: 'studentId',
-  otherKey: 'lessonId',
-  as: 'lessons'
-});

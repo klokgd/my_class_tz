@@ -2,10 +2,10 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import { LessonController } from '../controllers/lesson.contoller';
 
-const router = Router();
+const lessonRouter = Router();
 const controller = new LessonController();
 
-router.get('/', [
+lessonRouter.get('/lessons', [
   check('date').optional().isDate(),
   check('status').optional().isIn([0, 1]),
   check('teacherIds').optional().isString(),
@@ -14,4 +14,4 @@ router.get('/', [
   check('lessonsPerPage').optional().isInt({ min: 1 })
 ], controller.getLessons.bind(controller));
 
-export default router;
+export default lessonRouter;
