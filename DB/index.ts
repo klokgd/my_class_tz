@@ -3,6 +3,7 @@ import config from 'config'
 import { Config } from '../config/config.interface';
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
 
 const { database, username, password, host, port, dialect } = config.get<Config['db']>('db')
 
@@ -20,28 +21,27 @@ const models: Record<string, any> = {};
 
 const modelsDir = path.resolve(__dirname, 'models');
 
-for (const file of fs.readdirSync(modelsDir)) {
-  if (file.endsWith('.model.ts') || file.endsWith('.model.js')) {
-    const modelModule = require(path.join(modelsDir, file));
-    const modelName = Object.keys(modelModule).find(k => typeof modelModule[k] === 'function' && modelModule[k].prototype instanceof Model);
+(async () => {
+  for (const file of fs.readdirSync(modelsDir)) {
+    if (file.endsWith('.model.ts') || file.endsWith('.model.js')) {
+      const filePath = path.join(modelsDir, file);
+      const fileUrl = pathToFileURL(filePath).href;
+      const modelModule = (await import(fileUrl)).default;
+      const modelName = modelModule.name;
 
-    if (modelModule.initModel) {
-      modelModule.initModel(sequelize);
+      if (modelName) {
+        models[modelName] = modelModule;
+      }
+
     }
+  }
 
-    if (modelName) {
-      models[modelName] = modelModule[modelName];
+  for (const key in models) {
+    if (models[key].associate) {
+      models[key].associate(models);
     }
-
-    models[`__assoc__${file}`] = modelModule.associate;
   }
-}
-
-for (const key in models) {
-  if (key.startsWith('__assoc__') && typeof models[key] === 'function') {
-    models[key](models);
-  }
-}
+})()
 
 
 export { sequelize, models };

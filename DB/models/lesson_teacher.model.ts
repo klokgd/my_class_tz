@@ -1,23 +1,16 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../index';
-import { Lesson } from './lesson.model';
-import { Teacher } from './teacher.model';
 
-interface LessonTeacherAttributes {
-  lessonId: number;
-  teacherId: number;
-}
-
-export class LessonTeacher extends Model<LessonTeacherAttributes>
-  implements LessonTeacherAttributes {
+class LessonTeacher extends Model {
   public lessonId!: number;
   public teacherId!: number;
-}
 
+}
 
 LessonTeacher.init({
   lessonId: {
     type: DataTypes.INTEGER,
+    field: 'lesson_id',
     primaryKey: true,
     references: {
       model: 'lessons',
@@ -26,6 +19,7 @@ LessonTeacher.init({
   },
   teacherId: {
     type: DataTypes.INTEGER,
+    field: 'teacher_id',
     primaryKey: true,
     references: {
       model: 'teachers',
@@ -37,3 +31,5 @@ LessonTeacher.init({
   tableName: 'lesson_teachers',
   timestamps: false
 });
+
+export = LessonTeacher;

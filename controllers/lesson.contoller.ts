@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { LessonService } from '../services/lesson.service';
 import { LessonFilters } from '../dto/lessons-filter.query.dto';
+const service = new LessonService();
 
 export class LessonController {
-  private service = new LessonService();
 
   async getLessons(req: Request, res: Response): Promise<void> {
     try {
@@ -20,7 +20,7 @@ export class LessonController {
         lessonsPerPage: Number(req.query.lessonsPerPage)
       };
 
-      const lessons = await this.service.getLessons(filters);
+      const lessons = await service.getLessons(filters);
       res.json(lessons);
     } catch (error) {
       console.error(error);
